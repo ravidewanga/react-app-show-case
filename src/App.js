@@ -1,21 +1,21 @@
 import React from 'react';
 import { Provider } from "react-redux";
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import Login from './pages/Login';
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import Appbar from './components/Appbar';
 import Home from './pages/Home';
+import Login from './pages/Login';
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter >
+    <>
+      <BrowserRouter>
+        <Appbar/>
         <Switch>
-        <Route exact path="/" component={Login}/>
-        <Route path="/home" component={Home}/>
-        {/* <Route path="*" component={NotFound}/> */}
-      </Switch>
-    </BrowserRouter>
-    </div>
+          <Route exact path="/"><Home /></Route>
+          <Route path="/login"><Login /></Route>
+        </Switch>
+      </BrowserRouter>
+    </>
   );
 }
-
 export default App;

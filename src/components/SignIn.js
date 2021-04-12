@@ -84,10 +84,8 @@ class SignIn extends Component {
         //Make api call
         console.log("Make API Call");
         axios.post('/login', {
-            
             email: this.state.email,
             password: this.state.password
-
         }).then(function (response) {
             console.log(response);
         }).catch(function (error) {

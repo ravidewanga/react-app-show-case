@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PostData from '../services/PostData';
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from "@material-ui/core/styles";
+const axios = require('axios');
 
 const styles = theme => ({
     root: {
@@ -47,13 +47,16 @@ class SocialLogin extends Component {
                 token: res.accessToken,
                 provider_pic: res.Qs.EI
             };
-        }
-
+        }  
         if (data) {
-            PostData('signup111', data).then((result) => {
-                let responseJson = result;
-                sessionStorage.setItem("userData", JSON.stringify(responseJson));
-                this.setState({ redirect: true });
+            //Make api call
+            console.log("Make API Call");
+            axios.post('/social-login', {
+                data
+            }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
             });
         }
     }
@@ -85,12 +88,12 @@ class SocialLogin extends Component {
                                 autoLoad={false}
                                 //buttonText="Facebook"
                                 fields="name,email,picture"
-                                callback={responseFacebook} 
+                                callback={responseFacebook}
                                 icon="fa-facebook"
                                 size="small"
                                 textButton="facebook"
-                                />
-                            
+                            />
+
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <GoogleLogin
