@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
+import ReactDOM from "react-dom";
 import SocialLogin from '../components/SocialLogin';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { withStyles } from "@material-ui/core/styles";
+const axios = require('axios');
 
 const styles = theme => ({
     paper: {
@@ -36,21 +34,70 @@ const styles = theme => ({
 });
 
 class SignIn extends Component {
-    render() {
 
-        function Copyright() {
-            return (
-                <Typography variant="body2" color="textSecondary" align="center">
-                    {'Copyright © '}
-                    <Link color="inherit" href="https://material-ui.com/">
-                        Your Website
-            </Link>{' '}
-                    {new Date().getFullYear()}
-                    {'.'}
-                </Typography>
-            );
+    constructor(props) {
+        super();
+        this.state = {
+            email: '',emailTouched:false,
+            password: '',passwordTouched:false,
+            errors: {}
         }
+    }
+
+    evenHandler = (event) => {
+        const fieldName = event.target.name;
+        const fieldVal = event.target.value;
+        this.setState({
+            [fieldName]: fieldVal
+        })
+    }
+    handleOnInputBlur = (event) => {
+        const field_name = event.target.name;
+        const state = this.state;
+        const errors = this.validate(state);
+        this.setState({
+            errors: { ...errors, [field_name]: errors[field_name] }
+        })
+    }
+
+    validate = () => {
+        const errors = {};
+        if (this.state.email == '') {
+            errors.email = 'This field is required.';
+        }else if(!this.state.email.includes('@')){
+            errors.email = 'Please enter valid email address.';
+        }
+        if (this.state.password == '') {
+            errors.password = 'This field is required.';
+        }
+        return errors;
+    }
+
+    handleOnSubmit = event => {
+        event.preventDefault();
+        const errors = this.validate(this.state);
+        if (errors && Object.keys(errors).length !== 0) {
+            this.setState({ errors });
+            return;
+        }
+        this.setState({ errors: {} });
+        //Make api call
+        console.log("Make API Call");
+        axios.post('/login', {
+            
+            email: this.state.email,
+            password: this.state.password
+
+        }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    render() {
         const { classes } = this.props;
+        const {errors,email,password } = this.state;
         return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -61,7 +108,7 @@ class SignIn extends Component {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    <form className={classes.form} noValidate onSubmit={this.handleOnSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -71,8 +118,12 @@ class SignIn extends Component {
                             label="Email Address"
                             name="email"
                             autoComplete="email"
-                            autoFocus
+                            onBlur={this.handleOnInputBlur}
+                            onChange={this.evenHandler}
+                            helperText={errors.email}
+                            error={errors.email}
                         />
+                        
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -83,6 +134,10 @@ class SignIn extends Component {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onBlur={this.handleOnInputBlur}
+                            onChange={this.evenHandler}
+                            helperText={errors.password}
+                            error={errors.password}
                         />
                         {/* <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
@@ -105,8 +160,8 @@ class SignIn extends Component {
                             alignItems="center"
                         >
                             <b>OR</b>
-                            </Grid>
-                        <br/>
+                        </Grid>
+                        <br />
                         <SocialLogin />
 
                         <br /><br />
