@@ -34,68 +34,99 @@ const styles = theme => ({
 });
 
 class SignIn extends Component {
-
     constructor(props) {
-        super();
+        super(props);
         this.state = {
-            email: '',emailTouched:false,
-            password: '',passwordTouched:false,
-            errors: {}
-        }
+            formValues: {
+                email: "",
+                password: ""
+            },
+            formErrors: {
+                email: "",
+                password: ""
+            },
+            formValidity: {
+                email: false,
+                password: false
+            },
+            isSubmitting: false
+        };
     }
 
-    evenHandler = (event) => {
-        const fieldName = event.target.name;
-        const fieldVal = event.target.value;
+    handleChange = ({ target }) => {
+        const { formValues } = this.state;
+        formValues[target.name] = target.value;
+        this.setState({ formValues });
+        this.handleValidation(target);
+    };
+
+    handleValidation = target => {
+        const { name, value } = target;
+        const fieldValidationErrors = this.state.formErrors;
+        const validity = this.state.formValidity;
+        const isEmail = name === "email";
+        const isPassword = name === "password";
+        const emailTest = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+        validity[name] = value.length > 0;
+        fieldValidationErrors[name] = validity[name]
+            ? ""
+            : `${name} is required and cannot be empty`;
+
+        if (validity[name]) {
+            if (isEmail) {
+                validity[name] = emailTest.test(value);
+                fieldValidationErrors[name] = validity[name]
+                    ? ""
+                    : `${name} should be a valid email address`;
+            }
+            if (isPassword) {
+                validity[name] = value.length >= 8;
+                fieldValidationErrors[name] = validity[name]
+                    ? ""
+                    : `${name} should be 8 characters minimum`;
+            }
+        }
+
         this.setState({
-            [fieldName]: fieldVal
-        })
-    }
-    handleOnInputBlur = (event) => {
-        const field_name = event.target.name;
-        const state = this.state;
-        const errors = this.validate(state);
-        this.setState({
-            errors: { ...errors, [field_name]: errors[field_name] }
-        })
-    }
-
-    validate = () => {
-        const errors = {};
-        if (this.state.email == '') {
-            errors.email = 'This field is required.';
-        }else if(!this.state.email.includes('@')){
-            errors.email = 'Please enter valid email address.';
-        }
-        if (this.state.password == '') {
-            errors.password = 'This field is required.';
-        }
-        return errors;
-    }
-
-    handleOnSubmit = event => {
-        event.preventDefault();
-        const errors = this.validate(this.state);
-        if (errors && Object.keys(errors).length !== 0) {
-            this.setState({ errors });
-            return;
-        }
-        this.setState({ errors: {} });
-        //Make api call
-        console.log("Make API Call");
-        axios.post('/login', {
-            email: this.state.email,
-            password: this.state.password
-        }).then(function (response) {
-            console.log(response);
-        }).catch(function (error) {
-            console.log(error);
+            formErrors: fieldValidationErrors,
+            formValidity: validity
         });
-    }
+    };
+
+
+    handleSubmit = event => {
+        event.preventDefault();
+        this.setState({ isSubmitting: true });
+        const { formValues, formValidity } = this.state;
+        if (Object.values(formValidity).every(Boolean)) {
+            //alert("Form is validated! Submitting the form...");
+            console.log(formValues);
+            axios.post('http://localhost:8080/api/login', {
+                email: formValues.email,
+                password: formValues.password
+            }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
+            });
+            this.setState({ isSubmitting: false });
+        }else{
+            for (let key in formValues) {
+                let target = {
+                    name: key,
+                    value: formValues[key]
+                };
+                this.handleValidation(target);
+            }
+            this.setState({ isSubmitting: false });
+        }
+    };
 
     render() {
+        const { formValues, formErrors, isSubmitting } = this.state;
         const { classes } = this.props;
-        const {errors,email,password } = this.state;
+        const { errors, email, password } = this.state;
         return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -106,7 +137,7 @@ class SignIn extends Component {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <form className={classes.form} noValidate onSubmit={this.handleOnSubmit}>
+                    <form className={classes.form} noValidate onSubmit={this.handleSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -118,10 +149,13 @@ class SignIn extends Component {
                             autoComplete="email"
                             onBlur={this.handleOnInputBlur}
                             onChange={this.evenHandler}
-                            helperText={errors.email}
-                            error={errors.email}
+                            helperText={formErrors.email}
+                            error={formErrors.email}
+                            onChange={this.handleChange}
+                            value={formValues.email}
+
                         />
-                        
+
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -134,14 +168,17 @@ class SignIn extends Component {
                             autoComplete="current-password"
                             onBlur={this.handleOnInputBlur}
                             onChange={this.evenHandler}
-                            helperText={errors.password}
-                            error={errors.password}
+                            helperText={formErrors.password}
+                            error={formErrors.password}
+                            onChange={this.handleChange}
+                            value={formValues.password}
                         />
                         {/* <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Remember me"
                         /> */}
                         <Button
+                            disabled={isSubmitting}
                             type="submit"
                             fullWidth
                             variant="contained"

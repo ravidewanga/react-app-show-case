@@ -44,14 +44,15 @@ class SocialLogin extends Component {
                 provider: type,
                 email: res.Qs.zt,
                 provider_id: res.Qs.ER,
-                token: res.accessToken,
+                access_token: res.accessToken,
+                id_token: res.tokenId,
                 provider_pic: res.Qs.EI
             };
         }  
         if (data) {
             //Make api call
             console.log("Make API Call");
-            axios.post('/social-login', {
+            axios.post('http://localhost:8080/api/social-login', {
                 data
             }).then(function (response) {
                 console.log(response);
@@ -109,5 +110,4 @@ class SocialLogin extends Component {
         );
     }
 }
-
 export default withStyles(styles, { withTheme: true })(SocialLogin);
