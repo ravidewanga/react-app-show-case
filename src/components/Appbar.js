@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+import { Drawer, Box } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,15 +14,22 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
-import {DashboardSharp,LockOpen} from '@material-ui/icons';
+import { DashboardSharp, LockOpen } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
+
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            display: 'flex',
+            flexGrow: 1,
+        },
+        title: {
+            flexGrow: 1,
         },
         appBar: {
             transition: theme.transitions.create(['margin', 'width'], {
@@ -82,15 +89,19 @@ export default function Appbar() {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [lang, setLang] = React.useState(1);
+
+    const langChange = (event) => {
+        setLang(event.target.value);
+    }
 
     const handleDrawerOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleDrawerClose = () => {
         setOpen(false);
-    };
-
+    }
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -110,9 +121,22 @@ export default function Appbar() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+
+                    <Typography variant="h6" className={classes.title} noWrap>
                         React show case
                     </Typography>
+                    <Box 
+                        borderRadius={16}
+                        component="span" m={1}
+                    >
+                        <Select
+                            value={lang}
+                            onChange={langChange}
+                        >
+                            <MenuItem value={1}>En</MenuItem>
+                            <MenuItem value={2}>Hi</MenuItem>
+                        </Select>
+                    </Box>
                 </Toolbar>
             </AppBar>
             <Drawer
