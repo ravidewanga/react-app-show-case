@@ -16,7 +16,7 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DashboardSharp,LockOpen} from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
-import { Button } from '@material-ui/core';
+import { Button,Select } from '@material-ui/core';
 import { useTranslation,Trans } from 'react-i18next';
 
 
@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             display: 'flex',
+        },
+        title: {
+            flexGrow: 1,
         },
         appBar: {
             transition: theme.transitions.create(['margin', 'width'], {
@@ -79,14 +82,20 @@ const useStyles = makeStyles((theme: Theme) =>
             }),
             marginLeft: 0,
         },
+
+        languageDropDown : {
+            backgroudColor: '#FFFFFF'
+        }
     }),
 );
 
 export default function Appbar() {
     const {t, i18n } = useTranslation();
-    
-    const changeLanguage = (language) => {
-        i18n.changeLanguage(language)
+    const changeLanguage = (event) => {
+        i18n.changeLanguage(event.target.value)
+        
+        //console.log(t);
+        //language = event.target.value
     }
 
     const classes = useStyles();
@@ -119,12 +128,24 @@ export default function Appbar() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    
+                    <Typography variant="h6" className={classes.title} noWrap>
                         <Trans i18nKey="title"></Trans>
                     </Typography>
                     
-                    <Button onClick={()=> changeLanguage("en")}>EN</Button>
-                    <Button onClick={()=> changeLanguage("hi")}>HI</Button>
+
+                    <Select
+                        native
+                        value={i18n.language}
+                        onChange={changeLanguage}
+                        className={classes.languageDropDown}
+                        style={{backgroundColor:'#FFFFFF'}}
+                        >
+                        <option aria-label="None" value="" />
+                        <option value={"en"}>ENGLISH</option>
+                        <option value={"hi"}>HINDI</option>
+                    </Select>
+
                 </Toolbar>
             </AppBar>
             <Drawer
