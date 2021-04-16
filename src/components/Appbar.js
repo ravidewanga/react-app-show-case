@@ -16,6 +16,10 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DashboardSharp, LockOpen } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
+import { Button,Select } from '@material-ui/core';
+import { useTranslation,Trans } from 'react-i18next';
+
+
 
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -26,6 +30,9 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
+            flexGrow: 1,
+        },
+        title: {
             flexGrow: 1,
         },
         title: {
@@ -82,10 +89,22 @@ const useStyles = makeStyles((theme: Theme) =>
             }),
             marginLeft: 0,
         },
+
+        languageDropDown : {
+            backgroudColor: '#FFFFFF'
+        }
     }),
 );
 
 export default function Appbar() {
+    const {t, i18n } = useTranslation();
+    const changeLanguage = (event) => {
+        i18n.changeLanguage(event.target.value)
+        
+        //console.log(t);
+        //language = event.target.value
+    }
+
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -101,7 +120,7 @@ export default function Appbar() {
 
     const handleDrawerClose = () => {
         setOpen(false);
-    }
+    };
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -121,22 +140,24 @@ export default function Appbar() {
                     >
                         <MenuIcon />
                     </IconButton>
-
+                    
                     <Typography variant="h6" className={classes.title} noWrap>
-                        React show case
+                        <Trans i18nKey="title"></Trans>
                     </Typography>
-                    <Box 
-                        borderRadius={16}
-                        component="span" m={1}
-                    >
-                        <Select
-                            value={lang}
-                            onChange={langChange}
+                    
+
+                    <Select
+                        native
+                        value={i18n.language}
+                        onChange={changeLanguage}
+                        className={classes.languageDropDown}
+                        style={{backgroundColor:'#FFFFFF'}}
                         >
-                            <MenuItem value={1}>En</MenuItem>
-                            <MenuItem value={2}>Hi</MenuItem>
-                        </Select>
-                    </Box>
+                        <option aria-label="None" value="" />
+                        <option value={"en"}>ENGLISH</option>
+                        <option value={"hi"}>HINDI</option>
+                    </Select>
+
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -160,7 +181,9 @@ export default function Appbar() {
                             <ListItemIcon>
                                 <DashboardSharp fontSize="small" />
                             </ListItemIcon>
-                            <Typography variant="inherit">Home</Typography>
+                            <Typography variant="inherit">
+                                <Trans i18nKey="menus.home"></Trans>
+                            </Typography>
                         </MenuItem>
                     </NavLink>
 
@@ -170,7 +193,7 @@ export default function Appbar() {
                                 <LockOpen fontSize="small" />
                             </ListItemIcon>
                             <Typography variant="inherit" noWrap>
-                                Login
+                                <Trans i18nKey="menus.login"></Trans>
                         </Typography>
                         </MenuItem>
                     </NavLink>

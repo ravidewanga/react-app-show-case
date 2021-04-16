@@ -10,10 +10,10 @@ function App() {
     <>
       <BrowserRouter>
         <Appbar/>
-        <Switch>
-          <Route exact path="/"><Home /></Route>
-          <Route path="/login"><Login /></Route>
-        </Switch>
+          <Switch>
+            <Route exact path="/"><Home /></Route>
+            <Route path="/login"><Login /></Route>
+          </Switch>
       </BrowserRouter>
     </>
   );
