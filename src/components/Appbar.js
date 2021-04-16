@@ -16,6 +16,10 @@ import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DashboardSharp,LockOpen} from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
+import { Button } from '@material-ui/core';
+import { useTranslation,Trans } from 'react-i18next';
+
+
 
 const drawerWidth = 240;
 
@@ -79,6 +83,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Appbar() {
+    const {t, i18n } = useTranslation();
+    
+    const changeLanguage = (language) => {
+        i18n.changeLanguage(language)
+    }
+
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -90,7 +100,6 @@ export default function Appbar() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -111,8 +120,11 @@ export default function Appbar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        React show case
+                        <Trans i18nKey="title"></Trans>
                     </Typography>
+                    
+                    <Button onClick={()=> changeLanguage("en")}>EN</Button>
+                    <Button onClick={()=> changeLanguage("hi")}>HI</Button>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -136,7 +148,9 @@ export default function Appbar() {
                             <ListItemIcon>
                                 <DashboardSharp fontSize="small" />
                             </ListItemIcon>
-                            <Typography variant="inherit">Home</Typography>
+                            <Typography variant="inherit">
+                                <Trans i18nKey="menus.home"></Trans>
+                            </Typography>
                         </MenuItem>
                     </NavLink>
 
@@ -146,7 +160,7 @@ export default function Appbar() {
                                 <LockOpen fontSize="small" />
                             </ListItemIcon>
                             <Typography variant="inherit" noWrap>
-                                Login
+                                <Trans i18nKey="menus.login"></Trans>
                         </Typography>
                         </MenuItem>
                     </NavLink>

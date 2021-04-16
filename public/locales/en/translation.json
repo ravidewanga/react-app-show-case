@@ -1,0 +1,11 @@
+{
+    "title" : "React show case",
+    "description" : {
+        "part1" : "this is translation line part1",
+        "part2" : "this is translation line part2"
+    },
+    "menus":{
+        "login" : "Login",
+        "home" : "Home"
+    }
+}
